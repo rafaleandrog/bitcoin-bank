@@ -1,0 +1,2 @@
+import Link from "next/link";
+export default function Page() { return <div className="p-8 space-y-4"><h1 className="text-2xl">Login</h1><input className="input" placeholder="Email"/><input className="input" placeholder="Password" type="password"/><Link href="/join" className="btn-primary">Continue</Link><Link href="/auth/reset" className="text-sm text-accent block">Forgot PIN/password</Link></div>; }

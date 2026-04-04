@@ -1,0 +1,6 @@
+"use client";
+import { useAppStore } from "@/lib/store";
+import { useState } from "react";
+
+export default function Page(){const {activity}=useAppStore(); const [filter,setFilter]=useState('all'); const rows=filter==='all'?activity:activity.filter(a=>a.type===filter); const csv=['id,type,desc,amount,at',...rows.map(r=>`${r.id},${r.type},${r.desc},${r.amount},${r.at}`)].join('\n');
+return <div className="space-y-4"><h1 className="text-3xl">Activity</h1><div className="flex gap-3"><select className="input max-w-52" value={filter} onChange={e=>setFilter(e.target.value)}><option value="all">All</option><option value="receive">Receive</option><option value="send">Send</option><option value="stake">Stake</option><option value="loan">Loan</option></select><a className="btn-secondary" href={`data:text/csv;charset=utf-8,${encodeURIComponent(csv)}`} download="activity.csv">Export CSV</a></div><div className="card overflow-auto"><table className="w-full text-sm"><thead><tr className="text-left text-zinc-400"><th>ID</th><th>Type</th><th>Description</th><th>Amount</th><th>Date</th></tr></thead><tbody>{rows.map(r=><tr key={r.id} className="border-t border-zinc-800"><td>{r.id.slice(0,8)}</td><td>{r.type}</td><td>{r.desc}</td><td>{r.amount}</td><td>{new Date(r.at).toLocaleString()}</td></tr>)}</tbody></table></div></div>}

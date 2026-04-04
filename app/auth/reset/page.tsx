@@ -1,0 +1,1 @@
+export default function Page(){return <div className="p-8 space-y-3"><h1 className="text-2xl">Reset access</h1><input className="input" placeholder="Email"/><button className="btn-primary">Send recovery</button></div>}
