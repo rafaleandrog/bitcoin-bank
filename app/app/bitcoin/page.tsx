@@ -1,0 +1,2 @@
+import Link from "next/link";
+export default function Page(){return <div className="space-y-4"><h1 className="text-3xl">Bitcoin Hub</h1><div className="grid md:grid-cols-4 gap-3"><Link className="card" href="/app/bitcoin/receive">Receive</Link><Link className="card" href="/app/bitcoin/send">Send</Link><Link className="card" href="/app/bitcoin/vault">Vault</Link><Link className="card" href="/app/bitcoin/stake">Stake</Link></div></div>}

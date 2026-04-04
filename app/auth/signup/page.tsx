@@ -1,0 +1,1 @@
+import Link from "next/link"; export default function Page(){return <div className="p-8 space-y-3"><h1 className="text-2xl">Sign up</h1><input className="input" placeholder="Name"/><input className="input" placeholder="Email"/><Link href="/join" className="btn-primary">Create account</Link></div>}

@@ -1,0 +1,8 @@
+{
+  "name": "FediBank",
+  "version": "1.0",
+  "theme": "dark",
+  "primaryColor": "#f7931a",
+  "currency": "BRL",
+  "tagline": "Institutional Bitcoin banking"
+}

@@ -1,0 +1,2 @@
+import Link from "next/link";
+export default function Join(){return <div className="p-8 space-y-4"><h1 className="text-3xl">Join Federation</h1><div className="grid md:grid-cols-3 gap-3"><Link className="card hover:border-accent" href="/join/search">Search</Link><Link className="card hover:border-accent" href="/join/invite">Invite link</Link><Link className="card hover:border-accent" href="/join/qr">QR scan</Link></div></div>}
