@@ -1,640 +1,193 @@
-# FediBank v1.0 — Spec Simplificado do MVP
-> Versão focada no lançamento inicial. Prioridade máxima: módulo Bitcoin.
-> White-label preparado desde o início. RWA fica pronto visualmente, mas com escopo funcional futuro.
+# FediBank v1.0 — Spec Oficial (Atualizado)
+
+> Documento base para implementação do MVP focado em **Bitcoin-first** com arquitetura **white-label**.
+> Escopo de v1.0: experiência visual e interação completa, com mocks e sem integrações de produção.
 
 ---
 
-## 1. Objetivo do produto
+## 1) Visão de produto
 
-O **FediBank v1.0** é um app web responsivo de investimento com arquitetura preparada para white-label, inspirado em banco digital e plataforma de investimentos, mas **não voltado para pagamentos cotidianos**.
+O **FediBank v1.0** é um app web de investimentos com linguagem de banco digital institucional.
 
-No v1.0, o foco é entregar uma experiência premium e totalmente navegável para o lado **Bitcoin**, com:
+### Princípios
+- Não é app de pagamentos do dia a dia.
+- Foco absoluto no módulo **Bitcoin**.
+- Módulo **RWA** no v1.0 é principalmente visual e navegável (sem operação financeira real).
+- Preparado para multi-tenant (white-label) desde a base.
 
-- entrada em uma **Federação** via convite, link ou QR Code;
-- custódia e saldo em BTC dentro do contexto da federação;
-- depósitos e saques via **Lightning Network**;
-- opção de manter BTC no **Vault**;
-- opção de alocar BTC em **Stake** para receber yield em **BRL**;
-- empréstimos com BTC em colateral, com UX inspirada em Peoples Reserve, Ledn e Arch;
-- interface pronta para white-label;
-- área inicial de **RWA** apenas como vitrine e placeholder visual, usando referência visual do Bloxs e simulando um investimento imobiliário.
-
----
-
-## 2. Regra central de colateral
-
-**Esta regra deve aparecer em todas as telas de empréstimo, contratação, resumo de contrato e FAQ.**
-
-- O LTV **não causa liquidação automática** por oscilação de preço do BTC.
-- O colateral em BTC **só pode ser executado em caso de inadimplência**, conforme regras do contrato.
-- A variação do preço do BTC pode alterar **taxa, parcelas, saldo projetado e condições de renovação**, conforme o tipo do contrato.
-- Não existem margin calls forçadas no MVP.
-- No plano bullet, a extensão de prazo só pode ser solicitada quando o **LTV estiver em 50% ou menos**.
-- O **LTV máximo de contratação no MVP é 100%**.
-- Prazo dos empréstimos no MVP: **mínimo 90 dias e máximo 360 dias**.
+### Objetivo do usuário
+O investidor deve conseguir:
+1. Entrar em uma federação (obrigatório).
+2. Guardar BTC em Vault (custódia federada).
+3. Alocar BTC em Stake para gerar yield em BRL/USDT.
+4. Simular e contratar empréstimos com colateral em BTC.
+5. Acompanhar saldo, extrato e posições em uma UI premium.
 
 ---
 
-## 3. Escopo do MVP v1.0
+## 2) Regras mandatórias de negócio (Bitcoin Loans)
 
-## 3.1 Entra no v1.0
+Estas regras devem aparecer em:
+- simulador,
+- resumo de contrato,
+- tooltips,
+- modal de confirmação,
+- detalhes do contrato ativo.
 
-### Acesso e federação
-- onboarding educativo;
-- criar conta, login, reset de senha;
-- entrar em federação por link, QR Code ou busca por nome;
-- estado obrigatório de “usuário dentro de uma federação” para acessar o app;
-- PIN de 6 dígitos exigido apenas em ações críticas.
-
-### Bitcoin
-- dashboard principal;
-- saldo em BTC e BRL;
-- receive via Lightning;
-- send via Lightning;
-- Vault;
-- Stake com yield em BRL;
-- Loans com foco em:
-  - borrower escolhendo oferta existente como fluxo principal;
-  - lender criando oferta;
-  - marketplace de ofertas;
-  - detalhe e gestão do contrato;
-- activity/extrato;
-- prova de reservas mock;
-- configurações básicas.
-
-### White-label
-- tenant padrão chamado **FediBank**;
-- arquitetura de tema configurável via arquivo de marca;
-- componentes preparados para futura troca de nome, logo e paleta.
-
-### RWA
-- rota pronta;
-- cards e landing visual prontos;
-- uma simulação de oportunidade em **mercado imobiliário**;
-- referência visual inspirada em Bloxs;
-- sem motor transacional real no v1.0.
-
-## 3.2 Fica para versões futuras
-- compra de BTC dentro do app;
-- integração fiat real com PIX;
-- login real com biometria nativa;
-- múltiplas federações ativas simultaneamente com operações cruzadas;
-- borrower criando pedido para lenders responderem;
-- tokenização RWA operacional;
-- equity, CRI, CCB, SCP, nota promissória e outros veículos reais;
-- conexões regulatórias e operacionais externas;
-- governança completa;
-- bonds;
-- DCA;
-- notificações reais;
-- integração real com Fedimint, LN, price feed, custódia e KYC.
+### Regras
+1. **Não existe liquidação automática por variação do preço do BTC.**
+2. **Colateral só é executado em caso de inadimplência.**
+3. Preço do BTC afeta apenas:
+   - taxa,
+   - parcelas,
+   - projeções de saldo devedor.
+4. **LTV máximo de contratação: 100%.**
+5. Prazo permitido: **90 a 360 dias**.
+6. Modalidade **Bullet**:
+   - sem pagamentos até o vencimento,
+   - extensão somente quando **LTV <= 50%**.
 
 ---
 
-## 4. Posicionamento de UX
+## 3) Arquitetura funcional do v1.0
 
-O app deve parecer uma mistura de:
-- wallet premium de Bitcoin;
-- painel de crédito com colateral BTC;
-- plataforma de investimentos institucional.
+## 3.1 Seção Bitcoin (prioridade máxima)
 
-### Direção visual do v1.0
-- tema principal dark;
-- laranja como cor de ação principal;
-- cinzas escuros com áreas de alto contraste;
-- cards com aparência premium;
-- CTAs fortes;
-- dashboard limpo e institucional;
-- área RWA com linguagem mais “marketplace profissional”.
+### A) Federação (gate de acesso)
+- Join por busca, invite link e QR (mock).
+- Sem federação ativa, não acessa `/app`.
 
-### Referências de produto
-- Harbor: estrutura de wallet e relação com Fedimint;
-- Peoples Reserve: lógica narrativa do colateral e empréstimo;
-- Ledn e Arch: simuladores e gestão do crédito;
-- Bloxs: visual profissional para pipeline e oportunidades;
-- Maple, Ondo, Securitize, Centrifuge: influência para futuro institucional, sem necessidade de implementação real no v1.0.
+### B) Wallet BTC (Fedimint-inspired)
+- Saldo BTC e equivalente em BRL.
+- Receive LN mock: gerar invoice, QR, copiar e simular recebimento.
+- Send LN mock: colar invoice, parsear dados, confirmar com PIN, simular sucesso/erro.
 
----
+### C) Vault
+- Saldo total, disponível e comprometido.
+- Movimentar BTC entre Vault e Stake.
+- Selecionar BTC para colateral em empréstimo.
 
-## 5. Regras funcionais principais
+### D) Stake
+- Criar stake com taxa e prazo.
+- Yield projetado e acumulado em BRL/USDT (mock).
+- Fechamento de posição.
+- Estado explícito: ativa, vencida, encerrada.
 
-## 5.1 Entrada na federação
-O usuário não navega no app “solto”. Antes de acessar a área principal, ele:
-- encontra a federação por busca;
-- ou entra por link;
-- ou entra por QR Code;
-- e então passa a operar dentro de uma federação ativa.
+### E) Loans P2P intra-federação (MVP fechado)
+- Marketplace de ofertas.
+- Usuário pode atuar como lender ou borrower.
+- Fluxo principal do borrower: selecionar oferta existente e contratar.
+- Fluxo lender: publicar oferta com termos customizados.
 
-## 5.2 PIN de segurança
-PIN obrigatório apenas para:
-- enviar BTC;
-- contratar stake;
-- contratar empréstimo;
-- quitar empréstimo;
-- encerrar stake;
-- ações críticas equivalentes.
+#### Tipos de empréstimo
+1. Amortizante.
+2. Juros periódicos + principal no final.
+3. Bullet.
 
-## 5.3 Saldo
-O app mostra:
-- saldo em BTC;
-- saldo equivalente em BRL;
-- saldo em BRL disponível para exibir créditos de yield do Stake.
+#### Campos mínimos por oferta
+- tipo,
+- prazo,
+- taxa base,
+- moeda de liquidação (BRL/USDT),
+- LTV alvo,
+- janela de aceitação,
+- observações contratuais.
 
-## 5.4 Vault
-Vault é a posição de BTC mantida na federação como reserva/custódia.
-No v1.0, o Vault deve permitir:
-- visualizar saldo;
-- visualizar histórico;
-- receber BTC;
-- enviar BTC;
-- mover BTC para Stake;
-- selecionar BTC para uso como colateral.
-
-## 5.5 Stake
-O Stake representa uma alocação de BTC para geração de yield em BRL.
-
-### Regras do Stake no v1.0
-- yield pago apenas em **BRL**;
-- contratação com taxa e prazo definidos no momento da contratação;
-- o usuário vê:
-  - valor em BTC alocado;
-  - taxa contratada;
-  - prazo;
-  - rendimento BRL projetado;
-  - rendimento BRL acumulado mock;
-  - data de vencimento;
-  - status.
-
-## 5.6 Empréstimos
-O fluxo principal é:
-1. borrower acessa o marketplace;
-2. borrower escolhe uma oferta existente;
-3. borrower simula;
-4. borrower seleciona colateral BTC;
-5. borrower revisa contrato;
-6. borrower confirma com PIN.
-
-O lender pode:
-- criar oferta;
-- ver ofertas ativas;
-- editar ou cancelar oferta;
-- acompanhar contratos em andamento.
-
-### Modalidades de empréstimo
-O v1.0 deve contemplar 3 modalidades:
-
-#### a) Amortização padrão
-- parcelas com amortização desde o início.
-
-#### b) Juros periódicos + principal no final
-- paga juros durante o contrato;
-- principal quitado ao vencimento.
-
-#### c) Bullet
-- não há pagamento obrigatório até o vencimento;
-- pagamento integral ao final;
-- pode solicitar extensão se o LTV estiver saudável;
-- LTV saudável para extensão = **50% ou menos**.
-
-### Regras adicionais
-- LTV máximo simulado no v1.0: **100%**;
-- prazo entre **90 e 360 dias**;
-- não há liquidação por queda de preço;
-- inadimplência é o único gatilho de execução do colateral;
-- a valorização ou desvalorização do BTC altera apenas condições contratuais exibidas e cálculos simulados.
+### F) Atividade e controle
+- Extrato filtrável.
+- Export CSV mock.
+- Tela de Proof of Reserves mock.
 
 ---
 
-## 6. Arquitetura de informação
+## 3.2 Seção RWA (v1.0 = experiência visual navegável)
 
-## 6.1 Rotas principais
+### Inclui no MVP
+- Landing institucional.
+- Marketplace de oportunidades (mock).
+- Página de oportunidade (mock):
+  - tipo (equity, dívida, recebíveis etc),
+  - retorno alvo,
+  - prazo,
+  - risco,
+  - estrutura jurídica simulada.
+- Originação/captação em fluxo visual (sem liquidação real).
+
+### Fica para v2+
+- tokenização operacional,
+- lifecycle jurídico-regulatório completo,
+- distribuição real,
+- integrações de custódia, compliance e onchain settlement.
+
+---
+
+## 4) Referências e características que devem influenciar o produto
+
+- **Harbor Wallet**: organização da wallet BTC + abordagem Fedimint.
+- **Peoples Reserve / Ledn / Arch**: UX de empréstimo colateralizado em BTC e narrativa contratual.
+- **Ondo / Maple**: layout institucional para produtos com rendimento.
+- **Securitize / Centrifuge**: visão operacional de tokenização e estruturação para ativos reais.
+- **Bloxs**: linguagem comercial de originação + distribuição para middle market.
+- **Botanix (inspiração técnica futura)**: possíveis caminhos para interoperabilidade BTC x camada de ativos.
+
+---
+
+## 5) White-label obrigatório
+
+- Tema, nome, logo e textos por `brand config`.
+- Cada tenant pode ajustar:
+  - paleta,
+  - tipografia,
+  - copy,
+  - moedas exibidas,
+  - módulos habilitados.
+
+---
+
+## 6) Non-goals do v1.0
+
+- Compra/venda spot de BTC no app.
+- Integração bancária/PIX em produção.
+- KYC/AML real.
+- Liquidação real de RWA.
+- Multi-federação com crédito cruzado.
+
+---
+
+## 7) Rotas-alvo do MVP
 
 ### Público
-- `/`
-- `/onboarding`
-- `/auth/login`
-- `/auth/signup`
-- `/auth/reset`
-- `/join`
-- `/join/search`
-- `/join/invite`
-- `/join/qr`
+`/`, `/onboarding`, `/auth/login`, `/auth/signup`, `/auth/reset`, `/join`, `/join/search`, `/join/invite`, `/join/qr`
 
-### App autenticado
-- `/app`
-- `/app/bitcoin`
-- `/app/bitcoin/receive`
-- `/app/bitcoin/send`
-- `/app/bitcoin/vault`
-- `/app/bitcoin/stake`
-- `/app/bitcoin/stake/new`
-- `/app/bitcoin/stake/[id]`
-- `/app/bitcoin/loans`
-- `/app/bitcoin/loans/borrow/[id]`
-- `/app/bitcoin/loans/lend/new`
-- `/app/bitcoin/loans/lend/[id]`
-- `/app/federation`
-- `/app/activity`
-- `/app/security/proof-of-reserves`
-- `/app/settings`
-- `/app/rwa`
-
-## 6.2 Navegação principal
-### Desktop
-Sidebar com:
-- Dashboard
-- Vault
-- Stake
-- Loans
-- Activity
-- Federation
-- RWA
-- Proof of Reserves
-- Settings
-
-### Mobile
-Bottom navigation com:
-- Home
-- Vault
-- Loans
-- RWA
-- Profile/Menu
+### App
+`/app`, `/app/bitcoin`, `/app/bitcoin/receive`, `/app/bitcoin/send`, `/app/bitcoin/vault`, `/app/bitcoin/stake`, `/app/bitcoin/stake/new`, `/app/bitcoin/stake/[id]`, `/app/bitcoin/loans`, `/app/bitcoin/loans/borrow/[id]`, `/app/bitcoin/loans/lend/new`, `/app/bitcoin/loans/lend/[id]`, `/app/federation`, `/app/activity`, `/app/security/proof-of-reserves`, `/app/settings`, `/app/rwa`
 
 ---
 
-## 7. Telas e comportamentos
+## 8) Critérios de aceite
 
-## 7.1 Onboarding
-Objetivo:
-- explicar federação;
-- explicar Vault;
-- explicar Stake;
-- explicar empréstimos com colateral BTC;
-- explicar que não há compra de BTC dentro do app;
-- explicar entrada por federação.
-
-Passos sugeridos:
-1. O que é FediBank;
-2. O que é uma federação;
-3. O que é Vault e Stake;
-4. Como funcionam empréstimos com BTC;
-5. Como entrar em uma federação;
-6. CTA de criar conta ou entrar.
-
-## 7.2 Join Federation
-Fluxos:
-- buscar nome da federação;
-- entrar via link;
-- entrar via QR Code;
-- tela de preview da federação;
-- botão “Entrar nesta federação”.
-
-Informações visíveis:
-- nome;
-- descrição curta;
-- status;
-- número de membros mock;
-- prova de reservas/link mock;
-- botão de ingresso.
-
-## 7.3 Dashboard Bitcoin
-Elementos:
-- saudação e nome da federação atual;
-- saldo total em BTC;
-- equivalente em BRL;
-- cards rápidos:
-  - Vault;
-  - Stake;
-  - Loans ativos;
-  - Yield BRL acumulado;
-- gráfico de patrimônio;
-- últimas movimentações;
-- ações rápidas:
-  - Receber;
-  - Enviar;
-  - Novo Stake;
-  - Buscar Empréstimo.
-
-## 7.4 Receive
-Componentes:
-- input de valor;
-- seletor de unidade;
-- botão gerar invoice;
-- QR Code;
-- botão copiar invoice;
-- botão compartilhar;
-- botão “Simular recebimento”;
-- status da invoice.
-
-Comportamento:
-- ao simular recebimento, saldo deve atualizar e atividade deve registrar a entrada.
-
-## 7.5 Send
-Componentes:
-- input para invoice LN;
-- parsing mock do invoice;
-- valor;
-- taxa estimada;
-- resumo;
-- modal de confirmação;
-- input PIN;
-- botão confirmar;
-- toast de sucesso ou erro.
-
-## 7.6 Vault
-Componentes:
-- saldo total;
-- saldo disponível;
-- saldo comprometido em colateral;
-- saldo em stake;
-- histórico;
-- ações:
-  - Receber;
-  - Enviar;
-  - Mover para Stake;
-  - Usar como colateral.
-
-## 7.7 Stake list
-Componentes:
-- cards ou tabela de stakes;
-- status;
-- taxa;
-- prazo;
-- rendimento BRL acumulado;
-- botão “Novo Stake”;
-- empty state.
-
-## 7.8 Novo Stake
-Fluxo:
-1. escolher valor em BTC;
-2. escolher prazo;
-3. visualizar taxa;
-4. visualizar yield BRL projetado;
-5. revisar termos;
-6. confirmar com PIN.
-
-## 7.9 Detalhe do Stake
-Componentes:
-- valor alocado;
-- taxa;
-- prazo;
-- rendimento acumulado BRL;
-- linha do tempo;
-- status;
-- ação de encerrar, quando aplicável;
-- histórico do stake.
-
-## 7.10 Loans Hub
-Tela com tabs:
-- Borrow
-- Lend
-- Market
-
-### Borrow
-- contratos ativos;
-- CTA “Buscar oferta”.
-
-### Lend
-- ofertas criadas;
-- CTA “Criar oferta”.
-
-### Market
-- lista de ofertas;
-- filtros:
-  - moeda;
-  - prazo;
-  - taxa;
-  - modalidade;
-- ordenar por taxa, prazo e valor.
-
-## 7.11 Contratar empréstimo
-Fluxo:
-1. escolher oferta existente;
-2. ver detalhes da oferta;
-3. preencher valor desejado;
-4. definir colateral BTC;
-5. ver LTV;
-6. escolher modalidade;
-7. ver projeções;
-8. revisar contrato;
-9. confirmar com PIN.
-
-Resumo obrigatório:
-- modalidade;
-- prazo;
-- taxa;
-- colateral;
-- regra de inadimplência;
-- aviso de ausência de liquidação por preço.
-
-## 7.12 Criar oferta como lender
-Campos:
-- valor disponível;
-- moeda;
-- prazo;
-- taxa;
-- modalidade;
-- LTV de referência;
-- descrição opcional.
-
-Ações:
-- publicar;
-- editar;
-- cancelar.
-
-## 7.13 Detalhe do contrato de empréstimo
-Exibir:
-- status;
-- modalidade;
-- principal;
-- saldo devedor;
-- colateral BTC;
-- LTV atual;
-- parcelas ou cronograma;
-- prazo;
-- taxa atual mock;
-- histórico.
-
-Ações possíveis:
-- pagar parcela;
-- pagar juros;
-- quitar;
-- solicitar extensão do bullet;
-- adicionar colateral.
-
-## 7.14 Activity
-Tabela com:
-- data;
-- tipo;
-- origem;
-- destino;
-- valor BTC;
-- valor BRL;
-- status.
-
-Filtros:
-- tipo;
-- período;
-- status.
-
-Ação:
-- exportar CSV local.
-
-## 7.15 Proof of Reserves
-Tela mock com:
-- total em custódia;
-- total emitido em e-cash;
-- BTC comprometido em colateral;
-- ID de verificação;
-- data da última atualização;
-- botão copiar;
-- texto explicativo.
-
-## 7.16 Settings
-Itens:
-- moeda padrão;
-- tema;
-- notificações mock;
-- PIN;
-- tenant info;
-- logout.
-
-## 7.17 RWA
-Tela visual, sem operação real.
-Deve conter:
-- hero section institucional;
-- lista de oportunidades;
-- card principal de investimento imobiliário simulado;
-- dados mock:
-  - nome do projeto;
-  - target return;
-  - prazo;
-  - estrutura;
-  - captação;
-- badge “Coming soon”.
+- UI parece produto final (não wireframe).
+- Não há botão morto: toda ação gera navegação, feedback, modal, estado, toast ou erro/sucesso.
+- Formulários com validação + loading + erro + sucesso.
+- Fluxos críticos testáveis visualmente:
+  1. Join federation
+  2. Receive BTC
+  3. Send BTC
+  4. Criar stake
+  5. Contratar loan
+  6. Criar oferta lend
+  7. Ver contrato
+  8. Ver proof-of-reserves
+  9. Navegar RWA
 
 ---
 
-## 8. Estrutura técnica recomendada
+## 9) Evolução natural (integrações futuras)
 
-- Next.js com App Router
-- TypeScript
-- Tailwind
-- shadcn/ui ou equivalente
-- React Hook Form + Zod
-- Zustand ou Redux Toolkit
-- Mock backend com Route Handlers ou MSW
-- persistência local para manter estado mock entre refresh
-- Playwright para smoke tests
-- Vitest para serviços e regras de negócio simples
-
----
-
-## 9. Arquitetura de integração futura
-
-O código deve ser preparado com adapters, sem depender da integração real no v1.0.
-
-### Interfaces esperadas
-- `FedimintAdapter`
-- `LightningAdapter`
-- `PriceFeedAdapter`
-- `YieldEngineAdapter`
-- `FederationAdapter`
-
-### Evoluções naturais
-- integração com cliente Fedimint real;
-- integração com provedor Lightning real;
-- feed de preço real BTC/BRL;
-- trilha regulatória e KYC;
-- motor RWA operacional;
-- trilha institucional de tokenização e distribuição.
-
----
-
-## 10. White-label
-
-Criar configuração de marca em arquivo, por exemplo `brand.json`, com:
-- tenantName;
-- logo;
-- primaryColor;
-- accentColor;
-- surfaceColor;
-- textColor;
-- radius;
-- defaultTheme.
-
-Tenant padrão do MVP:
-- **FediBank**
-
-Objetivo:
-- permitir mudança futura de nome e identidade sem reescrever componentes.
-
----
-
-## 11. Critérios de aceite do MVP
-
-O MVP está aceito quando:
-
-1. todas as rotas principais existem;
-2. toda tela está visualmente pronta;
-3. todos os botões executam alguma ação observável;
-4. todos os formulários validam corretamente;
-5. os fluxos principais do lado Bitcoin podem ser testados ponta a ponta com dados mock;
-6. os estados de loading, sucesso, erro e vazio existem;
-7. o fluxo de federação existe antes da área logada;
-8. Stake paga yield em BRL no mock;
-9. Loans respeitam as 3 modalidades;
-10. a regra central do colateral aparece com clareza;
-11. o app funciona bem em desktop e mobile responsivo;
-12. a área RWA existe como placeholder premium visual;
-13. o código fica pronto para publicação em GitHub.
-
----
-
-## 12. Fora do escopo operacional do v1.0
-
-Mesmo que a UI exista, o v1.0 não precisa entregar:
-- autenticação real;
-- saldo real;
-- invoices LN reais;
-- custódia real;
-- negociação real entre usuários;
-- integração regulatória;
-- compra e venda real de BTC;
-- tokenização real de ativos;
-- dados reais de mercado.
-
----
-
-## 13. Roadmap resumido
-
-### v1.1
-- integração inicial real com Fedimint;
-- integração Lightning;
-- múltiplos estados de federação;
-- melhoria do módulo de activity.
-
-### v1.2
-- borrower cria pedido;
-- ofertas mais sofisticadas;
-- price feed real;
-- score e analytics.
-
-### v2.0
-- RWA funcional;
-- captação e distribuição;
-- trilha institucional;
-- integrações externas;
-- compliance e operações reais.
-
----
-
-## 14. Nota final de produto
-
-O v1.0 do FediBank deve ser entregue como um produto **UI-first**, altamente convincente, clicável e demonstrável, com foco absoluto em:
-- experiência de Bitcoin;
-- lógica de federação;
-- Vault;
-- Stake em BRL;
-- empréstimos com colateral BTC sem liquidação por preço.
+Quando evoluir além de mock:
+1. Fedimint real (mint/fed API).
+2. LN gateway real (invoice/payments).
+3. Price feed institucional (com SLA).
+4. Motor de rendimento e escrituração de passivos.
+5. Módulo regulatório RWA (veículo, documentos, distribuição, auditoria).
 
