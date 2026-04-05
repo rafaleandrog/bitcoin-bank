@@ -1,5 +1,13 @@
 export type ActivityType = "receive" | "send" | "stake" | "loan" | "federation";
 
+export interface ActivityEntry {
+  id: string;
+  type: ActivityType;
+  desc: string;
+  amount: string;
+  at: string;
+}
+
 export interface StakePosition {
   id: string;
   btc: number;
@@ -7,6 +15,7 @@ export interface StakePosition {
   durationDays: number;
   yieldProjectedBrl: number;
   yieldAccumulatedBrl: number;
+  startDate: string;
   status: "active" | "closed";
 }
 
@@ -26,5 +35,8 @@ export interface LoanContract {
   collateralBtc: number;
   ltv: number;
   type: LoanOffer["type"];
+  apr: number;
+  durationDays: number;
+  startDate: string;
   status: "active" | "repaid";
 }
