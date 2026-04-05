@@ -1,0 +1,421 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FediBank Desktop Showcase</title>
+  <style>
+    :root {
+      --bg: #08090c;
+      --panel: #11141c;
+      --panel-2: #151925;
+      --muted: #8f98ad;
+      --text: #e9edf6;
+      --accent: #f7931a;
+      --good: #37d67a;
+      --warn: #f6c343;
+      --danger: #ff6b6b;
+      --border: #23293a;
+      --shadow: 0 20px 40px rgba(0, 0, 0, 0.45);
+    }
+
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      font-family: Inter, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      color: var(--text);
+      background: radial-gradient(circle at 20% -10%, #1a2030 0%, var(--bg) 40%), var(--bg);
+      min-width: 1024px;
+    }
+
+    .desktop-wrap {
+      height: 100%;
+      padding: 28px;
+      display: grid;
+      place-items: center;
+    }
+
+    .app {
+      width: min(1320px, 95vw);
+      height: min(860px, 92vh);
+      min-height: 720px;
+      background: linear-gradient(180deg, #0f131d 0%, #0d1119 100%);
+      border: 1px solid #1b2130;
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      overflow: hidden;
+    }
+
+    .sidebar {
+      background: linear-gradient(180deg, #0e121a 0%, #0b0f16 100%);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      padding: 22px 16px;
+      gap: 18px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 10px;
+      border-radius: 12px;
+      background: #121724;
+      border: 1px solid var(--border);
+    }
+
+    .brand-badge {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: rgba(247, 147, 26, 0.12);
+      color: var(--accent);
+      font-weight: 700;
+      font-size: 16px;
+      border: 1px solid rgba(247, 147, 26, 0.35);
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 650;
+      letter-spacing: 0.2px;
+    }
+
+    .brand small {
+      color: var(--muted);
+      display: block;
+      margin-top: 2px;
+      font-size: 12px;
+    }
+
+    .nav-title {
+      margin: 0 10px;
+      color: #677089;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .nav {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .nav button {
+      all: unset;
+      cursor: pointer;
+      border-radius: 10px;
+      padding: 11px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: #c2cadc;
+      border: 1px solid transparent;
+      transition: 160ms ease;
+      font-size: 14px;
+    }
+
+    .nav button:hover {
+      background: #131a27;
+      border-color: #212a3d;
+      transform: translateX(2px);
+    }
+
+    .nav button.active {
+      background: linear-gradient(90deg, rgba(247, 147, 26, 0.18), rgba(247, 147, 26, 0.05));
+      color: #fff;
+      border-color: rgba(247, 147, 26, 0.45);
+    }
+
+    .nav .tag {
+      font-size: 11px;
+      color: #8f98ad;
+      background: #121927;
+      border: 1px solid #26324b;
+      padding: 2px 8px;
+      border-radius: 999px;
+    }
+
+    .profile {
+      margin-top: auto;
+      padding: 12px;
+      border-radius: 12px;
+      background: #111724;
+      border: 1px solid var(--border);
+      font-size: 13px;
+    }
+
+    .profile strong { display: block; font-size: 14px; margin-bottom: 2px; }
+    .profile span { color: var(--muted); }
+
+    .content {
+      display: flex;
+      flex-direction: column;
+      background: radial-gradient(circle at 85% -20%, rgba(247, 147, 26, 0.12) 0%, rgba(247, 147, 26, 0) 36%), #0d1119;
+    }
+
+    .topbar {
+      height: 68px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 22px;
+    }
+
+    .topbar h2 { margin: 0; font-size: 20px; }
+    .topbar p { margin: 2px 0 0; color: var(--muted); font-size: 13px; }
+
+    .pill {
+      color: #1a1200;
+      background: var(--accent);
+      font-weight: 650;
+      padding: 7px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+    }
+
+    .panel-wrap {
+      padding: 22px;
+      overflow: auto;
+      height: calc(100% - 68px);
+    }
+
+    .panel { display: none; animation: fade 180ms ease; }
+    .panel.active { display: block; }
+
+    @keyframes fade { from { opacity: 0.3; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+
+    .card {
+      background: linear-gradient(180deg, #121726, #101521);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px;
+    }
+
+    .card .label { color: var(--muted); font-size: 12px; margin-bottom: 8px; }
+    .card .value { font-size: 24px; font-weight: 700; letter-spacing: 0.2px; }
+    .card .delta { margin-top: 8px; font-size: 12px; color: var(--good); }
+
+    .section-title {
+      margin: 20px 0 10px;
+      font-size: 14px;
+      letter-spacing: 0.4px;
+      color: #c9d1e5;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #101624;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 13px 14px;
+      border-bottom: 1px solid #1f2635;
+      font-size: 13px;
+    }
+
+    th { color: #9da8bf; font-weight: 600; background: #121a29; }
+    tr:last-child td { border-bottom: 0; }
+
+    .chip { font-size: 11px; padding: 2px 8px; border-radius: 999px; border: 1px solid; }
+    .chip.good { color: var(--good); border-color: rgba(55, 214, 122, 0.45); background: rgba(55, 214, 122, 0.1); }
+    .chip.warn { color: var(--warn); border-color: rgba(246, 195, 67, 0.5); background: rgba(246, 195, 67, 0.1); }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 14px;
+    }
+
+    .muted { color: var(--muted); }
+    .accent { color: var(--accent); }
+
+    .kpi { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px dashed #222c42; font-size: 13px; }
+    .kpi:last-child { border-bottom: 0; }
+  </style>
+</head>
+<body>
+  <div class="desktop-wrap">
+    <div class="app" role="application" aria-label="FediBank desktop mockup">
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="brand-badge">₿</div>
+          <div>
+            <h1>FediBank</h1>
+            <small>Bitcoin-first banking</small>
+          </div>
+        </div>
+
+        <p class="nav-title">Navigation</p>
+        <nav class="nav" aria-label="Primary">
+          <button class="active" data-panel="dashboard"><span>Dashboard</span><span class="tag">Home</span></button>
+          <button data-panel="bitcoin"><span>Bitcoin</span><span class="tag">Wallet</span></button>
+          <button data-panel="stake"><span>Stake</span><span class="tag">Earn</span></button>
+          <button data-panel="loans"><span>Loans</span><span class="tag">Credit</span></button>
+        </nav>
+
+        <div class="profile">
+          <strong>Rafaela Andrade</strong>
+          <span>Premium account • BR</span>
+        </div>
+      </aside>
+
+      <main class="content">
+        <header class="topbar">
+          <div>
+            <h2 id="screen-title">Dashboard</h2>
+            <p id="screen-subtitle">Portfolio overview and account activity</p>
+          </div>
+          <span class="pill">Desktop Preview</span>
+        </header>
+
+        <div class="panel-wrap">
+          <section id="dashboard" class="panel active">
+            <div class="grid-3">
+              <article class="card">
+                <div class="label">Bitcoin Balance</div>
+                <div class="value">0.4275 BTC</div>
+                <div class="delta">+4.8% this week</div>
+              </article>
+              <article class="card">
+                <div class="label">BRL Wallet</div>
+                <div class="value">R$ 98.450,00</div>
+                <div class="delta">Ready for PIX transfer</div>
+              </article>
+              <article class="card">
+                <div class="label">USDT Reserve</div>
+                <div class="value">12,830 USDT</div>
+                <div class="delta">Stable allocation: 24%</div>
+              </article>
+            </div>
+
+            <div class="two-col">
+              <div>
+                <h3 class="section-title">Recent activity</h3>
+                <table>
+                  <thead>
+                    <tr><th>Date</th><th>Type</th><th>Amount</th><th>Status</th></tr>
+                  </thead>
+                  <tbody>
+                    <tr><td>2026-04-05</td><td>BTC Buy</td><td class="accent">+0.012 BTC</td><td><span class="chip good">Completed</span></td></tr>
+                    <tr><td>2026-04-04</td><td>Stake Payout</td><td>+93 USDT</td><td><span class="chip good">Credited</span></td></tr>
+                    <tr><td>2026-04-03</td><td>Loan Payment</td><td>-R$ 1.280,00</td><td><span class="chip warn">Pending review</span></td></tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <div>
+                <h3 class="section-title">Account health</h3>
+                <div class="card">
+                  <div class="kpi"><span class="muted">Net worth (USD)</span><strong>$146,290</strong></div>
+                  <div class="kpi"><span class="muted">Collateral ratio</span><strong>168%</strong></div>
+                  <div class="kpi"><span class="muted">Risk score</span><strong style="color: var(--good)">Low</strong></div>
+                  <div class="kpi"><span class="muted">Monthly yield</span><strong>7.2%</strong></div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section id="bitcoin" class="panel">
+            <h3 class="section-title">Bitcoin Wallet</h3>
+            <div class="card">
+              <p class="muted">Main cold wallet</p>
+              <p class="value" style="margin: 0 0 10px">0.4275 BTC</p>
+              <p class="muted">Approx. value: <span class="accent">R$ 258.320,00</span></p>
+              <div class="kpi"><span>Send</span><span class="muted">Lightning / On-chain</span></div>
+              <div class="kpi"><span>Receive</span><span class="muted">Generate new invoice</span></div>
+              <div class="kpi"><span>DCA Plan</span><span>R$ 2.000 weekly</span></div>
+            </div>
+          </section>
+
+          <section id="stake" class="panel">
+            <h3 class="section-title">Staking Overview</h3>
+            <div class="grid-3">
+              <article class="card"><div class="label">Total Staked</div><div class="value">9,500 USDT</div><div class="delta">APY 8.4%</div></article>
+              <article class="card"><div class="label">Rewards (30d)</div><div class="value">+221 USDT</div><div class="delta">Compounding enabled</div></article>
+              <article class="card"><div class="label">Next Payout</div><div class="value">18h 12m</div><div class="delta">Projected +7.1 USDT</div></article>
+            </div>
+            <div class="card">
+              <p class="muted">Allocation strategy</p>
+              <div class="kpi"><span>Low Risk Pool</span><strong>65%</strong></div>
+              <div class="kpi"><span>Balanced Pool</span><strong>25%</strong></div>
+              <div class="kpi"><span>High Yield Pool</span><strong>10%</strong></div>
+            </div>
+          </section>
+
+          <section id="loans" class="panel">
+            <h3 class="section-title">Bitcoin-backed Loans</h3>
+            <div class="card">
+              <div class="kpi"><span class="muted">Open principal</span><strong>R$ 42.000,00</strong></div>
+              <div class="kpi"><span class="muted">Interest rate</span><strong>1.35% / month</strong></div>
+              <div class="kpi"><span class="muted">Collateral locked</span><strong>0.148 BTC</strong></div>
+              <div class="kpi"><span class="muted">Next due date</span><strong>2026-04-18</strong></div>
+            </div>
+            <h3 class="section-title">Repayment history</h3>
+            <table>
+              <thead>
+                <tr><th>Installment</th><th>Due date</th><th>Amount</th><th>Status</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>#09</td><td>2026-03-18</td><td>R$ 1.280,00</td><td><span class="chip good">Paid</span></td></tr>
+                <tr><td>#10</td><td>2026-04-18</td><td>R$ 1.280,00</td><td><span class="chip warn">Upcoming</span></td></tr>
+              </tbody>
+            </table>
+          </section>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script>
+    const meta = {
+      dashboard: ["Dashboard", "Portfolio overview and account activity"],
+      bitcoin: ["Bitcoin", "Manage wallet, transfers and DCA settings"],
+      stake: ["Stake", "Track allocation and staking rewards"],
+      loans: ["Loans", "Monitor collateralized credit and repayments"],
+    };
+
+    const navButtons = document.querySelectorAll('.nav button');
+    const panels = document.querySelectorAll('.panel');
+    const title = document.getElementById('screen-title');
+    const subtitle = document.getElementById('screen-subtitle');
+
+    navButtons.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const target = btn.dataset.panel;
+
+        navButtons.forEach((b) => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        panels.forEach((panel) => {
+          panel.classList.toggle('active', panel.id === target);
+        });
+
+        title.textContent = meta[target][0];
+        subtitle.textContent = meta[target][1];
+      });
+    });
+  </script>
+</body>
+</html>
